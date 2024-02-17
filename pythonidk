@@ -1,0 +1,66 @@
+import tkinter as tk
+from tkinter import scrolledtext
+
+class BrowniePointsTracker:
+    def __init__(self, master):
+        self.master = master
+        master.title("Brownie Points Tracker")
+
+        self.points = 0
+        self.notes_history = []
+
+        self.points_label = tk.Label(master, text="Brownie Points: 0")
+        self.points_label.pack()
+
+        self.increment_button = tk.Button(master, text="+", command=self.increment_points)
+        self.increment_button.pack(side=tk.LEFT)
+
+        self.decrement_button = tk.Button(master, text="-", command=self.decrement_points)
+        self.decrement_button.pack(side=tk.LEFT)
+
+        self.note_entry_label = tk.Label(master, text="Enter note for point change:")
+        self.note_entry_label.pack()
+
+        self.note_entry = tk.Entry(master)
+        self.note_entry.pack()
+
+        self.add_note_button = tk.Button(master, text="Add Note", command=self.add_note)
+        self.add_note_button.pack()
+
+        self.history_label = tk.Label(master, text="History of Notes:")
+        self.history_label.pack()
+
+        self.history_text = scrolledtext.ScrolledText(master, wrap=tk.WORD, height=10, width=50)
+        self.history_text.pack()
+        self.history_text.configure(state='disabled')  # Make the history text read-only
+
+    def increment_points(self):
+        self.points += 1
+        self.update_points_label()
+        self.add_note()
+
+    def decrement_points(self):
+        self.points -= 1
+        self.update_points_label()
+        self.add_note()
+
+    def add_note(self):
+        note = self.note_entry.get()
+        if note.strip() != "":
+            self.notes_history.append(f"{'+1' if self.points > 0 else '-1'}: {note}")
+            self.update_history_text()
+        self.note_entry.delete(0, tk.END)
+
+    def update_points_label(self):
+        self.points_label.config(text=f"Brownie Points: {self.points}")
+
+    def update_history_text(self):
+        self.history_text.configure(state='normal')  # Enable editing of the text
+        self.history_text.delete(1.0, tk.END)  # Clear existing text
+        for note in self.notes_history:
+            self.history_text.insert(tk.END, note + "\n")
+        self.history_text.configure(state='disabled')  # Disable editing of the text
+
+root = tk.Tk()
+my_gui = BrowniePointsTracker(root)
+root.mainloop()
